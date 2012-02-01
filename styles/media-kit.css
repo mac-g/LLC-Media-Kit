@@ -210,7 +210,7 @@ td { vertical-align: top; }
 /* ==|== primary styles =====================================================
    Author(s): NJ/BV/MM ~MultiView 2012
    ========================================================================== */
-body{margin:0;padding:0;background-color: #008dbc;}
+body{margin:0;padding:0}
 .hidden{display:none;}
 .slideChange{cursor:pointer}
 .spacer-10px{clear:both;height:10px;}
@@ -221,9 +221,40 @@ body{margin:0;padding:0;background-color: #008dbc;}
 	width:100%;
 	padding:0
 }
+#backgroundComp{
+	background-color: #008dbc;
+	border: none;
+	position: absolute;
+	top: 80px;
+	left: 0px;
+	height: 200px;
+	width: 1920px;
+	overflow: hidden;
+}
 .stage-bg-gradient{
 	position: absolute;
-	top: 40px;
+	top: 0px;
+	left: 0px;
+}
+#stage-lighting-effects{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 1920px;
+	height: 2160px;
+}
+#stage-canvas{
+	width: 1920px;
+	height: 2160px;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+#sunburst-canvas{
+	display: none;
+}
+#gradient-canvas{
+
 }
 /* HEADER SECTION */
 .header{

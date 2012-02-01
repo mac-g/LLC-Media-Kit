@@ -20,12 +20,20 @@ var pointerInMotion = false;
 var pointerAnimationHandler;
 var currentBenefit;
 
+/*** animated background globals ***/
+var canvas;
+var sunburstCanvas;
+var ctx; //for 2d context
+var sctx; // for sketching
+var gradientCanvas;
+var gctx; 
 
 var mediaKit = {/*** Retrieves xml feed, runs template manager, attach onclick actions ****/
 	init: function() {
 	$(window).unload( function () {} );
 	mediaKit.loadPage(startPage, 'none');
 	mediaKit.setupLinks();
+	mediaKit.setupBackgrounds();
 	},
 	loadPage: function(pageName, animationMethod, order){
 		$.get(feedName, function(xml){
@@ -46,7 +54,10 @@ var mediaKit = {/*** Retrieves xml feed, runs template manager, attach onclick a
 				globalNavPointer = $('.header-edge-pointer');
 				console.log(globalNavPointer);
 				mediaKit.setPointerTargetX('#' + startPage + '_mainNav');
-				$(window).resize(function(){mediaKit.setPointerX();});
+				$(window).resize(function(){
+					mediaKit.setPointerX();
+					mediaKit.adjustBackgroundPosition();
+				});
 			});
 		}
 			$.get(template, function(data) {//now for the body content
@@ -55,6 +66,7 @@ var mediaKit = {/*** Retrieves xml feed, runs template manager, attach onclick a
 				$('section#stage-anchor').html(newPage);
 				$('.stage').css('height', stageHeight);
 				$('body').data('activeNav', '0');
+				mediaKit.adjustBackgroundPosition();
 				}else{//a nav click
 				var activeNav = $('body').data('activeNav');
 				var direction = (activeNav < order) ? 'up' : 'down';
@@ -63,35 +75,40 @@ var mediaKit = {/*** Retrieves xml feed, runs template manager, attach onclick a
 				}
 	//AUDIENCE PAGE
 		if(pageName == 'audience'){
-			$('.stage-bg-gradient').animate({opacity: 0}, 400, function(){
+			$('#stage-lighting-effects').animate({opacity: 0}, 400, function(){
 				mediaKit.pageTransition(direction, newPage);
+				$('#backgroundComp').animate({'background-color': '#008dbc'}, 1200);
 			});
 			}
 	//BENEFITS PAGE
 		if(pageName == 'benefits'){
-		$('.stage-bg-gradient').animate({opacity: 0}, 400, function(){
+		$('#stage-lighting-effects').animate({opacity: 0}, 400, function(){
 			mediaKit.pageTransition(direction, newPage);
 			mediaKit.setupBenefitsPage();
+			$('#backgroundComp').animate({'background-color': '#4e8f14'}, 1200);
 			});
 			}
 	//INVENTORY PAGE
 		if(pageName == 'inventory'){
 			//transition up
-		$('.stage-bg-gradient').animate({opacity: 0}, 400, function(){
-			mediaKit.pageTransition(direction, newPage);
+		$('#stage-lighting-effects').animate({opacity: 0}, 400, function(){
+			mediaKit.pageTransition(direction, newPage);	
 			mediaKit.setupInventoryPage();
+			$('#backgroundComp').animate({'background-color': '#ab1111'}, 1200);
 			});
 			}
 	//PRICING PAGE
 		if(pageName == 'pricing'){
-		$('.stage-bg-gradient').animate({opacity: 0}, 400, function(){
+		$('#stage-lighting-effects').animate({opacity: 0}, 400, function(){
 			mediaKit.pageTransition(direction, newPage);
+			$('#backgroundComp').animate({'background-color': '#b31da7'}, 1200);
 			});
 			}
 	//CONTACT PAGE
 		if(pageName == 'contact'){
-		$('.stage-bg-gradient').animate({opacity: 0}, 400, function(){
+		$('#stage-lighting-effects').animate({opacity: 0}, 400, function(){
 			mediaKit.pageTransition(direction, newPage);
+			$('#backgroundComp').animate({'background-color': '#868686'}, 1200);
 			});
 			}
 
@@ -163,21 +180,68 @@ var mediaKit = {/*** Retrieves xml feed, runs template manager, attach onclick a
 			
 			$('.stage').css('height', stageHeight);
 			$(window).resize(function(){
-			var stageHeight = $(document).height()-80;
-			$('.stage').css('height', stageHeight);
+				//var stageHeight = $(document).height()-80;
+				//$('.stage').css('height', stageHeight);
+				console.log($('.stage'));
 			});
 			
 	
 	},
-	fadeUpBgGradient: function(){
-		$('.stage-bg-gradient').animate({opacity: 1}, 1200);
+	setupBackgrounds: function(){
+		$('#backgroundComp').height($(document).height() - 80);
+		canvas = document.getElementById('stage-canvas');
+		sunburstCanvas = document.getElementById('sunburst-canvas');
+		gradientCanvas = document.getElementById('gradient-canvas');
+		if(canvas.getContext){
+			ctx = canvas.getContext('2d');
+			sctx = sunburstCanvas.getContext('2d');
+			gctx = gradientCanvas.getContext('2d');
+			mediaKit.initBgGradient();
+			console.log('contexts finished');
+		}
+		else{
+			fallbackSunburst = document.createElement('img');
+			fallbackSunburst.src = 'images/fallback_sunburst.png';
+			fallbackSunburst.class = '';
+			document.getElementById('stageCanvas').appendChild(fallbackSunburst);
+			console.log('fail');
+		}
 	},
-	adjustBgGradientPos: function(){
-		var stageHeight = $('#stage-anchor').height();
-		console.log(stageHeight);
-		var i = $('.stage-bg-gradient');
-		var s = $('#stage-anchor');
-		$(i).offset({top: -(($(i).height() - $(s).height())/2), left: -(($(i).width() - $(s).width())/2)}); // -((($(i).height() - $(s).height())/2) + s.offset().top)
+	initBgGradient: function(){
+		var gradient = gctx.createRadialGradient(960, 1080, 1, 960, 1080, 960);
+		gradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+		gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+		gctx.fillStyle = gradient;
+		gctx.fillRect(0,0,1920, 2160);
+		console.log('init gradient');
+	},
+	initSunburst: function(){
+		
+	},
+	fadeCanvas: function(direction){
+		if(direction == 'up'){
+		
+		}
+		if(direction == 'down'){
+		
+		}
+	},
+	updateCanvas: function(){
+	
+	},
+	drawCanvas: function(){
+		
+	},
+	fadeUpBgGradient: function(){
+		$('#stage-lighting-effects').animate({opacity: 1}, 1200);
+		console.log('lightup success');
+	},
+	adjustBackgroundPosition: function(){
+		$('#backgroundComp').height($(document).height() - 80);
+		var i = $('#stage-lighting-effects');
+		var s = $('#backgroundComp');
+		$(i).offset({top: -(($(i).height() - $(s).height())/2) + 200, left: -(($(i).width() - $(s).width())/2)});
+		console.log($(i).offset().top);
 	},
 	setupLinks: function(){
 		mediaKit.linkOrder = linkOrder;
